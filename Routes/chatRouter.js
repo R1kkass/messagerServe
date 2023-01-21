@@ -8,4 +8,4 @@ router.post('/create', chatController.create)
 router.get('/getall', chatController.getAll)
 router.get('/getone', chatController.getOne)
 
-module.exports=router
+module.exports = router
