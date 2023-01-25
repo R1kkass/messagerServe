@@ -58,6 +58,16 @@ const Subscriber = sequelize.define('subscriber', {
     subscribeId: {type: DataTypes.INTEGER},
 })
 
+const Likes = sequelize.define('likes', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    userId: {type: DataTypes.INTEGER},
+    postId: {type: DataTypes.STRING}
+
+})
+
+User.hasMany(Likes)
+Likes.belongsTo(User)
+
 User.hasMany(Subscriber)
 Subscriber.belongsTo(User)
 
@@ -80,5 +90,6 @@ module.exports={
     Feed,
     Img, 
     Comment,
-    Subscriber
+    Subscriber,
+    Likes
 }

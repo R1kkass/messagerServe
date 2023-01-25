@@ -18,6 +18,8 @@ const { graphqlHTTP } = require('express-graphql')
 const schema = require('./graphql/shema/shema')
 const root = require('./graphql/subs')
 
+
+
 app.use(cors())
 app.use(express.json())
 app.use(express.static(path.resolve(__dirname,'static')))

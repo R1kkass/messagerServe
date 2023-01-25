@@ -48,8 +48,11 @@ class ChatController{
         const user = await Chat.findOne({where: {
             [Op.and]: [{ userCreator: email }, { secondUser: secondUser }],
         }, order: [["lastId","DESC"]]})
-        console.log(user);
-        if(user){
+
+        const user2 = await Chat.findOne({where: {
+            [Op.and]: [{ userCreator: secondUser }, { secondUser: email }],
+        }, order: [["lastId","DESC"]]})
+        if(user || user2){
             return res.json({message: false})  
         }
         

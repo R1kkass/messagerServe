@@ -1,8 +1,9 @@
 const userController = require('../controller/userController');
-const { User } = require('../models/model');
+const { User, Likes } = require('../models/model');
 const ApiError = require("../error/ApiError")
 const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken')
+const like = require('./likes')
 
 const generateJwt = (id, email, role, img, name) => {
     return jwt.sign(
@@ -38,6 +39,15 @@ const root = {
         const user = await User.findOne({ where: { id } })
         return user
     },
+
+    updateUser: async ({ input }) => {
+        const { id, role } = input
+        const user = await User.update({role: role}, { where: { id } })
+        console.log(user);
+        return user
+    },
+
+    ...like
 
 }
 
