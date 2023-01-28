@@ -1,6 +1,7 @@
 const { User, Subscriber } = require("../models/model")
 const ApiError = require("../error/ApiError")
 const {Op} = require('sequelize')
+const sequelize = require('../db')
 
 class SubscribeController{
     async create(req, res, next){
@@ -30,6 +31,17 @@ class SubscribeController{
         const {subscribeId} = req.query
         const device = await Subscriber.findAll({where: {subscribeId}, include: {all:true}})
         return res.json({device})
+    } catch (e){
+        return ApiError.badRequest(e.message)
+    }}
+
+    async getAllReverse(req, res, next){
+        try{
+        const {userId} = req.query
+        
+        const subs = sequelize.query(`SELECT "subscriber"."id", "subscriber"."userId", "subscriber"."subscribeId", "subscriber"."createdAt", "subscriber"."updatedAt", "user"."id" AS "user.id", "user"."email" AS "user.email", "user"."name" AS "user.name", "user"."password" AS "user.password", "user"."role" AS "user.role", "user"."img" AS "user.img", "user"."createdAt" AS "user.createdAt", "user"."updatedAt" AS "user.updatedAt" FROM "subscribers" AS "subscriber" LEFT OUTER JOIN "users" AS "user" ON "subscriber"."subscribeId" = "user"."id" WHERE "subscriber"."userId" = '1';`)
+        let subss =await subs
+        return res.json({subss})
     } catch (e){
         return ApiError.badRequest(e.message)
     }}

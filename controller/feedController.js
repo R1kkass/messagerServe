@@ -1,10 +1,12 @@
 const ApiError = require("../error/ApiError")
 const bcrypt = require("bcrypt")
-const {User, Chat, Comment, Feed, Img} = require('../models/model')
+const {User, Chat, Comment, Feed, Img, Likes} = require('../models/model')
 const jwt = require('jsonwebtoken')
 const {Op} = require('sequelize')
 const uuid = require('uuid')
 const path = require('path')
+const sequelize = require('../db')
+
 
 class FeedController{
     async create(req, res, next){
@@ -43,46 +45,71 @@ class FeedController{
     async getAll(req, res){
         try{
         let feed
+        let likes
+        let comment
         const {id, limit} = req.query
+        
         if(id){
-            console.log('tut');
-            feed = await Feed.findAndCountAll({where: {userId: id},
+            feed = await Feed.findAndCountAll({
+                where: {userId: id},
                 include:[
                     {
-                        model: Img
+                        model: Img,
+                        attributes: {exclude: ['createdAt', 'updatedAt']}
                     },
                     {
-                        model: User
+                        model: User,
+                        attributes:{exclude: ['createdAt', 'updatedAt']}
                     },
                     {
                         model:Comment,
                         limit: 2,
-                        include: User
-                    }
+                        include: User,
+                        attributes: {exclude: ['createdAt', 'updatedAt']}
+                    },
+
                 ],
                 limit: limit || 10,
                 order: [["id","DESC"]]
+            },
+            )
+            likes = await Likes.count({
+                group:['likes.feedId']
+            })
+            comment=await Comment.count({
+                group: ['comment.feedId']
             })
         }else{
             feed = await Feed.findAndCountAll({
                 include:[
                     {
-                        model: Img
+                        model: Img,
+                        attributes: {exclude: ['createdAt', 'updatedAt']}
                     },
                     {
-                        model: User
+                        model: User,
+                        attributes:{exclude: ['createdAt', 'updatedAt']}
                     },
                     {
                         model:Comment,
                         limit: 2,
-                        include: User
-                    }],
+                        include: User,
+                        attributes: {exclude: ['createdAt', 'updatedAt']}
+                    },
+
+                ],
                 limit: limit || 10,
                 order: [["id","DESC"]]
             },
             )
+            likes = await Likes.count({
+                group:['likes.feedId']
+            })
+            comment=await Comment.count({
+                group: ['comment.feedId']
+            })
         }
-        return res.json({feed})
+        return res.json({feed, likes, comment})
         }catch(e){
             return ApiError.badRequest(e.message)
         }

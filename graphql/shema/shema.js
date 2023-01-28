@@ -15,6 +15,10 @@ const schema = buildSchema(
             postId: ID
         }
 
+        type LikeCount{
+            count: String
+        }
+
         type Post {
             id: ID,
             title: String,
@@ -39,6 +43,8 @@ const schema = buildSchema(
             getAllUser: [User],
             getOneUser(id: ID): User,
             getOneLike(input: LikeInput): Like, 
+            getAllLike(input: LikeInput): LikeCount,
+            getCountOneLike(input: LikeInput): LikeCount
         }
 
         type Mutation{

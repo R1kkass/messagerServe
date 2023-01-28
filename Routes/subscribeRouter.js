@@ -6,6 +6,7 @@ const router = new Router()
 
 router.post('/create', authMiddlewareCheck, subscribeController.create)
 router.get('/getall', authMiddlewareCheck, subscribeController.getAll)
+router.get('/getallreverse', authMiddlewareCheck, subscribeController.getAllReverse)
 router.get('/getone', authMiddlewareCheck, subscribeController.getOne)
 router.post('/delete', authMiddlewareCheck, subscribeController.delete)
 

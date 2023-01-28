@@ -35,8 +35,7 @@ const User = sequelize.define('user', {
 const Feed = sequelize.define('feed', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     userId: {type: DataTypes.INTEGER},
-    text: {type: DataTypes.TEXT,},
-    likes: {type: DataTypes.INTEGER, defaultValue: 0},
+    text: {type: DataTypes.TEXT,}
 })
 
 const Img = sequelize.define('img', {
@@ -61,12 +60,14 @@ const Subscriber = sequelize.define('subscriber', {
 const Likes = sequelize.define('likes', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     userId: {type: DataTypes.INTEGER},
-    postId: {type: DataTypes.STRING}
-
+    feedId: {type: DataTypes.INTEGER}
 })
 
 User.hasMany(Likes)
 Likes.belongsTo(User)
+
+Feed.hasMany(Likes)
+Likes.belongsTo(Feed)
 
 User.hasMany(Subscriber)
 Subscriber.belongsTo(User)

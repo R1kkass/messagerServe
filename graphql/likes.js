@@ -10,14 +10,14 @@ const likes = {
 
     getAllLike: async ({ input }) => {
         const {postId} = input
-        const like = await Likes.findAll({ where: { postId } })
+        const like = await Likes.findAndCountAll({ where: { feedId: postId } })
         return like
     },
 
     getOneLike: async ({ input }) => {
         try{
         const {postId, userId} = input
-        const like = await Likes.findOne({ where: { postId, userId } })
+        const like = await Likes.findOne({ where: { feedId: postId, userId } })
         return like
         }catch(e){
             return e
@@ -31,13 +31,15 @@ const likes = {
             return 'Некорректный данные'
         }
         const candidate = await Likes.findOne({ where: {
-            [Op.and]: [{ userId }, { postId }],
+            [Op.and]: [{ userId }, { feedId: postId }],
         }})
         if (candidate) {
             return 'Like уже стоит'
         }
-        const like = await Likes.create({ userId, postId })
-        return like
+        const like = await Likes.create({ userId, feedId: postId })
+        const likeCount = {}
+        likeCount.id = await Likes.count({where: {feedId: postId}})
+        return likeCount
     }catch(e){
         return e
     }
@@ -49,20 +51,20 @@ const likes = {
             return 'Некорректный данные'
         }
         const candidate = await Likes.findOne({ where: {
-            [Op.and]: [{ userId }, { postId }],
+            [Op.and]: [{ userId }, { feedId: postId }],
         }})
         if (candidate) {
             const like = await Likes.destroy({where: 
-                {[Op.and]: [{userId}, {postId}]} 
+                {[Op.and]: [{userId}, {feedId: postId}]} 
             })
-            return like
+            const likeCount = {}
+            likeCount.id = await Likes.count({where: {feedId: postId}})
+            console.log(likeCount);
+            return likeCount
         }
         return 'Ошибка'
-        
     },
-
 }
-
 
 
 module.exports = likes
